@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HAGAQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --red: #e50914; --red-dark: #b00610; --black: #0a0a0a; --gold: #1a1200; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #000;
+  color: #fff;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+body.modal-open { overflow: hidden; }
+
+/* PARTÍCULAS */
+#particles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* HEADER */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,10,10,0.75);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  border-bottom: 1px solid rgba(229,9,20,0.15);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.6);
+}
+.header-inner {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: center;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.logo {
+  font-weight: 900;
+  font-size: 26px;
+  letter-spacing: 1px;
+  cursor: text;
+  outline: none;
+  white-space: nowrap;
+}
+.logo span { color: var(--red); text-shadow: 0 0 20px rgba(229,9,20,0.6); }
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-family: 'Poppins';
+  font-weight: 600;
+  font-size: 14px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.nav-btn:hover { color: #fff; background: rgba(255,255,255,0.06); }
+.nav-btn.active {
+  background: var(--red);
+  color: #fff;
+  box-shadow: 0 0 20px rgba(229,9,20,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.mais { position: relative; }
+.mais-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: rgba(15,15,15,0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 8px;
+  min-width: 160px;
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+  z-index: 10;
+}
+.mais-dropdown.ativo { display: flex; animation: fadeUp 0.2s ease; }
+.mais-dropdown button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  text-align: left;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-family: 'Poppins';
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.mais-dropdown button:hover { background: rgba(229,9,20,0.2); color: var(--red); }
+
+.search {
+  position: relative;
+  max-width: 420px;
+  width: 100%;
+  justify-self: center;
+}
+.search input {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 11px 44px 11px 16px;
+  color: #fff;
+  font-family: 'Poppins';
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s cubic-bezier(.4,0,.2,1);
+}
+.search input:focus {
+  background: rgba(255,255,255,0.09);
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(229,9,20,0.2), 0 0 20px rgba(229,9,20,0.3);
+}
+.search input::placeholder { color: rgba(255,255,255,0.5); }
+.search svg {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.btn-usuario {
+  background: var(--red);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: 0.3s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 0 20px rgba(229,9,20,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+  white-space: nowrap;
+}
+.btn-usuario:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(229,9,20,0.6), inset 0 1px 0 rgba(255,255,255,0.2); }
+
+/* MAIN */
+main {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(180deg, #1a1200 0%, #0f0c00 8%, #0a0a0a 35%, #000000 100%);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+.container { max-width: 1600px; margin: 0 auto; padding: 0 24px; }
+
+.titulo-categoria {
+  font-size: 56px;
+  font-weight: 800;
+  margin: 40px 0 24px;
+  text-shadow: 0 0 40px rgba(229,9,20,0.3), 0 4px 20px rgba(0,0,0,0.8);
+  animation: fadeUp 0.6s ease;
+}
+
+/* HERO BANNER */
+.hero-wrap { position: relative; margin-bottom: 80px; }
+.hero {
+  position: relative;
+  height: 640px;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05), 0 0 100px rgba(229,9,20,0.15);
+}
+.hero-bg {
+  position: absolute;
+  inset: -5%;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.65) saturate(1.1);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  will-change: transform;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.7) 100%),
+              linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 40%);
+}
+.hero-foto {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 380px;
+  height: 380px;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 25px 70px rgba(0,0,0,0.9), 0 0 0 6px rgba(255,255,255,0.95), 0 0 60px rgba(255,255,255,0.2);
+  z-index: 3;
+  transition: transform 0.4s cubic-bezier(.4,0,.2,1);
+}
+.hero-foto:hover { transform: translate(-50%, -50%) scale(1.02); }
+.hero-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.hero-nome {
+  position: absolute;
+  left: 70px;
+  bottom: 85px;
+  background: white;
+  color: #000;
+  padding: 20px 36px;
+  font-weight: 900;
+  font-size: 24px;
+  letter-spacing: 0.5px;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+  z-index: 3;
+  text-transform: uppercase;
+  transition: all 0.4s cubic-bezier(.4,0,.2,1);
+}
+
+.hero-dots {
+  position: absolute;
+  right: 70px;
+  bottom: 45px;
+  display: flex;
+  gap: 14px;
+  z-index: 4;
+}
+.dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+  border: 2px solid transparent;
+}
+.dot:hover { background: rgba(255,255,255,0.6); transform: scale(1.2); }
+.dot.active {
+  background: white;
+  width: 32px;
+  border-radius: 6px;
+  box-shadow: 0 0 15px rgba(255,255,255,0.8);
+}
+
+.hero-nav {
+  position: absolute;
+  top: 0;
+  width: 18%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 5;
+  opacity: 0;
+}
+
+/* GRID JOGOS */
+.grid-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+.grid-header h3 { font-size: 30px; font-weight: 800; letter-spacing: 0.5px; }
+
+.jogos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 26px;
+}
+.game-card {
+  position: relative;
+  aspect-ratio: 3/4.2;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #111;
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1), box-shadow 0.35s;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05);
+  animation: fadeUp 0.6s ease forwards;
+  opacity: 0;
+}
+.game-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(.4,0,.2,1);
+}
+.game-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 30%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 1;
+}
+.game-card::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 18px;
+  background: linear-gradient(45deg, var(--red), #ff6b00, var(--red));
+  opacity: 0;
+  z-index: -1;
+  filter: blur(15px);
+  transition: opacity 0.3s;
+}
+.game-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.9), 0 0 40px rgba(229,9,20,0.5);
+}
+.game-card:hover::after { opacity: 0.7; }
+.game-card:hover::before { opacity: 1; }
+.game-card:hover img { transform: scale(1.12); }
+
+.card-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 18px;
+  z-index: 2;
+  transform: translateY(10px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+}
+.game-card:hover .card-info { transform: translateY(0); opacity: 1; }
+.card-nome { font-weight: 700; font-size: 15px; margin-bottom: 4px; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+.card-cat { font-size: 12px; color: rgba(255,255,255,0.7); }
+
+/* DETALHES MODAL */
+.detalhes {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #000;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transform: translateY(100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.6s cubic-bezier(.4,0,.2,1), opacity 0.5s;
+}
+.detalhes.ativo { transform: translateY(0); opacity: 1; visibility: visible; }
+.detalhes-bg {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(60px) brightness(0.35) saturate(1.3);
+  transform: scale(1.3);
+  z-index: 0;
+}
+.detalhes-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at top, rgba(26,18,0,0.85) 0%, rgba(0,0,0,0.97) 70%);
+  z-index: 1;
+}
+.fechar {
+  position: fixed;
+  top: 24px;
+  right: 28px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: white;
+  font-size: 26px;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+  display: grid;
+  place-items: center;
+}
+.fechar:hover { background: var(--red); transform: rotate(90deg) scale(1.05); box-shadow: 0 0 30px rgba(229,9,20,0.6); }
+
+.detalhes-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 70px;
+  max-width: 1350px;
+  margin: 0 auto;
+  padding: 90px 40px 50px;
+  align-items: flex-start;
+}
+.detalhes-left { flex-shrink: 0; width: 360px; }
+.detalhes-left img {
+  width: 100%;
+  aspect-ratio: 3/4.2;
+  object-fit: cover;
+  border-radius: 22px;
+  box-shadow: 0 35px 70px rgba(0,0,0,0.85), 0 0 0 2px rgba(229,9,20,0.25), 0 0 80px rgba(229,9,20,0.2);
+}
+
+.detalhes-right { flex: 1; padding-top: 10px; min-width: 0; }
+.det-nome {
+  display: inline-block;
+  background: var(--red);
+  color: white;
+  font-size: 44px;
+  font-weight: 900;
+  padding: 18px 44px;
+  transform: skewX(-6deg);
+  box-shadow: 0 12px 35px rgba(229,9,20,0.5), 0 0 50px rgba(229,9,20,0.3);
+  margin-bottom: 26px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 4px;
+}
+.det-nome span { display: inline-block; transform: skewX(6deg); }
+.det-categoria { font-size: 20px; color: rgba(255,255,255,0.75); margin-bottom: 28px; font-weight: 500; letter-spacing: 0.3px; }
+
+.det-tamanho {
+  display: inline-block;
+  background: white;
+  color: #000;
+  font-weight: 900;
+  font-size: 28px;
+  padding: 14px 30px;
+  border-radius: 12px;
+  margin-bottom: 32px;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.5);
+}
+
+.btn-baixar {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(180deg, #7a0f0f 0%, #4a0707 100%);
+  color: white;
+  font-weight: 900;
+  font-size: 24px;
+  letter-spacing: 1.5px;
+  padding: 22px 68px;
+  border-radius: 16px;
+  text-decoration: none;
+  border: 2px solid var(--red);
+  box-shadow: 0 0 35px rgba(229,9,20,0.5), inset 0 2px 0 rgba(255,255,255,0.1), inset 0 -2px 10px rgba(0,0,0,0.5);
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+  text-transform: uppercase;
+  margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+}
+.btn-baixar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+.btn-baixar:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 0 55px rgba(229,9,20,0.8), inset 0 2px 0 rgba(255,255,255,0.15); background: linear-gradient(180deg, #9a1313 0%, #5a0808 100%); }
+.btn-baixar:hover::before { transform: translateX(100%); }
+
+.det-sinopse {
+  background: rgba(10,10,10,0.75);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 30px;
+  font-size: 16px;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.88);
+  max-width: 720px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+}
+
+.sugestoes { position: relative; z-index: 2; max-width: 1350px; margin: 20px auto 100px; padding: 0 40px; }
+.sugestoes h4 { font-size: 26px; margin-bottom: 26px; font-weight: 800; }
+.sugestoes-grid { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: var(--red) transparent; }
+.sugestoes-grid::-webkit-scrollbar { height: 8px; }
+.sugestoes-grid::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 4px; }
+.sugestoes-grid::-webkit-scrollbar-thumb { background: var(--red); border-radius: 4px; }
+.sugestoes-grid .game-card { flex: 0 0 180px; scroll-snap-align: start; }
+
+/* ANIMAÇÕES */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* RESPONSIVO */
+@media (max-width: 1100px) {
+  .detalhes-content { gap: 40px; }
+  .det-nome { font-size: 36px; }
+}
+@media (max-width: 900px) {
+  .header-inner { grid-template-columns: 1fr auto; gap: 14px; }
+  .search { grid-column: 1 / -1; order: 3; max-width: none; }
+  nav { gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-btn { padding: 8px 14px; font-size: 13px; }
+  .titulo-categoria { font-size: 38px; margin: 24px 0 18px; }
+  .hero { height: 520px; border-radius: 20px; }
+  .hero-foto { width: 280px; height: 280px; }
+  .hero-nome { left: 24px; bottom: 90px; font-size: 18px; padding: 14px 22px; }
+  .hero-dots { right: 24px; bottom: 24px; }
+  .jogos-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .detalhes-content { flex-direction: column; padding: 70px 24px 30px; align-items: center; text-align: center; }
+  .detalhes-left { width: 100%; max-width: 300px; }
+  .det-nome { font-size: 28px; padding: 14px 28px; }
+  .det-categoria { font-size: 17px; }
+  .btn-baixar { width: 100%; justify-content: center; font-size: 20px; padding: 18px; }
+  .det-sinopse { text-align: left; padding: 22px; }
+  .sugestoes { padding: 0 24px; }
+}
+@media (max-width: 390px) {
+  .container { padding: 0 16px; }
+  .header-inner { padding: 12px 16px; }
+  .logo { font-size: 22px; }
+  .hero-foto { width: 240px; height: 240px; }
+  .jogos-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+}
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+
+<header>
+  <div class="header-inner">
+    <div class="header-left">
+      <!-- TROQUE O TEXTO DA LOGO AQUI -->
+      <div class="logo" contenteditable="true" spellcheck="false">HAGA<span>Q</span></div>
+      <nav>
+        <button class="nav-btn active" data-cat="TODOS">TODOS</button>
+        <button class="nav-btn" data-cat="Recomendações">Recomendações</button>
+        <div class="mais">
+          <button class="nav-btn" id="btn-mais">MAIS +</button>
+          <div class="mais-dropdown" id="mais-dropdown">
+            <button data-cat="Infantil">Infantil</button>
+            <button data-cat="Ação">Ação</button>
+            <button data-cat="Aventura">Ficticio</button>
+            <button data-cat="Corrida">Terror</button>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <div class="search">
+      <input type="text" id="busca" placeholder="Pesquise">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </div>
+
+    <button class="btn-usuario">USUÁRIO</button>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <h1 class="titulo-categoria" id="titulo-cat">Infantil</h1>
+    
+    <div class="hero-wrap">
+      <div class="hero" id="hero">
+        <div class="hero-bg" id="hero-bg"></div>
+        <div class="hero-foto" id="hero-foto"><img alt="Jogo em destaque"></div>
+        <div class="hero-nome" id="hero-nome">NOME da HISTORIA</div>
+        <div class="hero-dots" id="hero-dots"></div>
+        <button class="hero-nav prev" id="hero-prev" aria-label="Anterior"></button>
+        <button class="hero-nav next" id="hero-next" aria-label="Próximo"></button>
+      </div>
+    </div>
+
+    <div class="grid-header">
+      <h3 id="grid-titulo">Todos</h3>
+    </div>
+    <div class="jogos-grid" id="jogos-grid"></div>
+  </div>
+</main>
+
+<!-- PÁGINA DE DETALHES -->
+<div class="detalhes" id="detalhes">
+  <div class="detalhes-bg" id="detalhes-bg"></div>
+  <div class="detalhes-overlay"></div>
+  <button class="fechar" id="fechar-detalhes">✕</button>
+  
+  <div class="detalhes-content">
+    <div class="detalhes-left">
+      <img id="det-capa" alt="Capa do jogo">
+    </div>
+    <div class="detalhes-right">
+      <div class="det-nome"><span id="det-nome"></span></div>
+      <div class="det-categoria" id="det-categoria"></div>
+      <div class="det-tamanho" id="det-tamanho"></div>
+      <br>
+      <a id="det-download" class="btn-baixar" target="_blank" rel="noopener">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        BAIXAR
+      </a>
+      <div class="det-sinopse" id="det-sinopse"></div>
+    </div>
+  </div>
+
+  <div class="sugestoes">
+    <h4>Você também pode gostar</h4>
+    <div class="sugestoes-grid" id="sugestoes-grid"></div>
+  </div>
+</div>
+
+<script>
+// ============================
+// ADICIONE SEUS JOGOS AQUI
+// Copie um objeto e altere os dados
+// ============================
+const jogos = [
+  {
+    id: 1,
+    nome: "The Walking Dead",
+    categoria: "Terror",
+    tamanho: "HQ",
+    sinopse: "A história em quadrinhos The Walking Dead acompanha Rick Grimes, um xerife que acorda de um coma e descobre que o mundo foi devastado por um apocalipse zumbi. Ele lidera um grupo de sobreviventes em busca de segurança, mas logo percebe que o maior perigo não são os mortos-vivos, mas a crueldade dos próprios seres humanos.",
+    imagemCapa: "https://m.media-amazon.com/images/I/91+pwoC9LaS.jpg",
+    imagemBanner: "https://www.fmetropolitana.com.br/wp-content/uploads/2019/07/20190702-the-walking-dead.jpg",
+    linkDownload: "https://guardioesdoglobo.blogspot.com/2013/02/the-walking-dead.html", // TROQUE O LINK DE DOWNLOAD
+    destaque: true,
+    recomendado: true
+  },
+  {
+    id: 2,
+    nome: "It: A Coisa",
+    categoria: "Terror",
+    tamanho: "Livro",
+    sinopse: "IT: A Coisa (1986), de Stephen King, é um clássico do terror que se passa na cidade de Derry, no Maine. A história acompanha o Clube dos Otários, um grupo de sete amigos que enfrenta uma entidade cósmica e maligna. O monstro muda de forma, assumindo frequentemente a aparência do palhaço Pennywise para se alimentar do medo de crianças.",
+    imagemCapa: "https://m.media-amazon.com/images/I/91g9Dvtf+jL.jpg",
+    imagemBanner: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2oXi0ezJCXFlynb2fnRBDngQalQBWHlgJMA&s",
+    linkDownload: "https://kbook.com.br/wp-content/uploads/2016/08/It_-A-coisa-Stephen-King.pdf",
+    destaque: true,
+    recomendado: true
+  },
+  {
+    id: 3,
+    nome: "A cartomante",
+    categoria: "Suspense",
+    tamanho: "Conto",
+    sinopse: "O conto realista A Cartomante, de Machado de Assis, narra a trágica história de um triângulo amoroso. Envolve Rita e seu amante Camilo (que é cético e não acredita em misticismo), além de Vilela, marido traído e amigo de infância do amante.",
+    imagemCapa: "https://tocalivros.s3.amazonaws.com/images/audiolivros/200/a/-/a-cartomante-machado-de-assis-1063163.jpg",
+    imagemBanner: "https://cdn.awsli.com.br/2551/2551876/produto/243122976ddc204043e.jpg",
+    linkDownload: "https://archivepublicdomain.com/files/2025/07/a-cartomante.pdf?t=f63cc2c7c81ee17de9b9118a4287f6c7ca683b84253872287dea68cc3ade40de",
+    destaque: true,
+    recomendado: true
+  },
+  {
+    id: 4,
+    nome: "O Alienista",
+    categoria: "Humor",
+    tamanho: "Conto",
+    sinopse: "O Alienista, clássico conto realista de Machado de Assis, narra a história do médico Simão Bacamarte, que retorna a Itaguaí para estudar a mente humana. Ele funda a Casa Verde, um manicômio onde passa a internar pessoas por comportamentos cada vez mais arbitrários, gerando caos, revoltas e uma reflexão irônica sobre a própria loucura.",
+    imagemCapa: "https://m.media-amazon.com/images/I/91O-9YjxTJL._AC_UF1000,1000_QL80_.jpg",
+    imagemBanner: "https://www.brasilparalelo.com.br/_next/image?url=https%3A%2F%2Fmkt.brasilparalelo.com.br%2F60ff690cd7b0537edb99a29a%2F685ea3881c4be06fd33abc63_O%252520Alienista.jpg&w=3840&q=75",
+    linkDownload: "https://archivepublicdomain.com/files/2025/02/O-Alienista.pdf?t=3b84b6a29f165a51b919b199d0866b81faca7939f2570c81fab9f6965dec0f2d",
+    destaque: true,
+    recomendado: false
+  },
+  {
+    id: 5,
+    nome: "Alice no País das Maravilhas",
+    categoria: "Fantasia",
+    tamanho: "Livro",
+    sinopse: "Alice no País das Maravilhas, de Lewis Carroll, narra a história de uma menina curiosa que segue um Coelho Branco até sua toca. Transportada para um mundo subterrâneo fantástico e sem sentido (nonsense), ela muda de tamanho, toma chá com o Chapeleiro Maluco e enfrenta a tirana Rainha de Copas antes de acordar e descobrir que tudo era um sonho.",
+    imagemCapa: "https://cdn.awsli.com.br/600x450/2495/2495784/produto/271444925/380526-tmrczn61rt.jpg",
+    imagemBanner: "https://www.editorawish.com.br/cdn/shop/articles/banner1.jpg?v=1712847505",
+    linkDownload: "https://www.ebooksbrasil.org/adobeebook/alicep.pdf",
+    destaque: true,
+    recomendado: true
+  },
+ 
+];
+
+// ===== ESTADO =====
+let categoriaAtual = 'TODOS';
+let buscaAtual = '';
+let slideAtual = 0;
+let intervaloHero;
+
+// ===== ELEMENTOS =====
+const grid = document.getElementById('jogos-grid');
+const busca = document.getElementById('busca');
+const tituloCat = document.getElementById('titulo-cat');
+const gridTitulo = document.getElementById('grid-titulo');
+const heroBg = document.getElementById('hero-bg');
+const heroFoto = document.getElementById('hero-foto').querySelector('img');
+const heroNome = document.getElementById('hero-nome');
+const heroDots = document.getElementById('hero-dots');
+const detalhes = document.getElementById('detalhes');
+
+// ===== BANNER HERO =====
+const destaques = jogos.filter(j => j.destaque).slice(0,5);
+
+function initHero() {
+  heroDots.innerHTML = '';
+  destaques.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => { goToSlide(i); resetInterval(); };
+    heroDots.appendChild(dot);
+  });
+  atualizarHero(0);
+  intervaloHero = setInterval(proximoSlide, 5000);
+}
+
+function atualizarHero(index) {
+  const jogo = destaques[index];
+  heroBg.style.opacity = '0';
+  setTimeout(() => {
+    heroBg.style.backgroundImage = `url(${jogo.imagemBanner})`;
+    heroFoto.src = jogo.imagemCapa;
+    heroNome.textContent = jogo.nome;
+    heroBg.style.opacity = '1';
+  }, 200);
+  
+  document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i === index));
+  slideAtual = index;
+}
+
+function proximoSlide() { atualizarHero((slideAtual + 1) % destaques.length); }
+function anteriorSlide() { atualizarHero((slideAtual - 1 + destaques.length) % destaques.length); }
+function goToSlide(i) { atualizarHero(i); }
+function resetInterval() { clearInterval(intervaloHero); intervaloHero = setInterval(proximoSlide, 5000); }
+
+document.getElementById('hero-next').onclick = () => { proximoSlide(); resetInterval(); };
+document.getElementById('hero-prev').onclick = () => { anteriorSlide(); resetInterval(); };
+
+// Parallax no banner
+document.getElementById('hero').addEventListener('mousemove', (e) => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width - 0.5;
+  const y = (e.clientY - rect.top) / rect.height - 0.5;
+  heroBg.style.transform = `scale(1.08) translate(${x * -20}px, ${y * -15}px)`;
+});
+document.getElementById('hero').addEventListener('mouseleave', () => {
+  heroBg.style.transform = 'scale(1.05)';
+});
+
+// ===== RENDER GRID =====
+function renderJogos() {
+  let lista = [...jogos];
+  
+  if (categoriaAtual === 'Recomendações') {
+    lista = lista.filter(j => j.recomendado);
+  } else if (categoriaAtual !== 'TODOS') {
+    lista = lista.filter(j => j.categoria === categoriaAtual);
+  }
+  
+  if (buscaAtual) {
+    lista = lista.filter(j => j.nome.toLowerCase().includes(buscaAtual.toLowerCase()));
+  }
+  
+  grid.innerHTML = '';
+  lista.forEach((jogo, i) => {
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    card.style.animationDelay = `${i * 0.04}s`;
+    card.innerHTML = `
+      <img src="${jogo.imagemCapa}" alt="${jogo.nome}" loading="lazy">
+      <div class="card-info">
+        <div class="card-nome">${jogo.nome}</div>
+        <div class="card-cat">${jogo.categoria} • ${jogo.tamanho}</div>
+      </div>
+    `;
+    card.onclick = () => abrirDetalhes(jogo.id);
+    
+    // Tilt 3D
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = `translateY(-10px) scale(1.03) rotateY(${x * 8}deg) rotateX(${y * -8}deg)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+    
+    grid.appendChild(card);
+  });
+  
+  gridTitulo.textContent = buscaAtual ? `Resultados para "${buscaAtual}"` : (categoriaAtual === 'TODOS' ? 'Catálogo Completo' : categoriaAtual);
+}
+
+// ===== CATEGORIAS =====
+document.querySelectorAll('[data-cat]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    if (btn.closest('nav > .nav-btn')) btn.classList.add('active');
+    
+    categoriaAtual = btn.dataset.cat;
+    tituloCat.textContent = categoriaAtual === 'TODOS' ? 'Destaques' : categoriaAtual;
+    if (categoriaAtual === 'Recomendações') tituloCat.textContent = 'Recomendações';
+    
+    document.getElementById('mais-dropdown').classList.remove('ativo');
+    renderJogos();
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  };
+});
+
+document.getElementById('btn-mais').onclick = (e) => {
+  e.stopPropagation();
+  document.getElementById('mais-dropdown').classList.toggle('ativo');
+};
+document.addEventListener('click', () => document.getElementById('mais-dropdown').classList.remove('ativo'));
+
+// ===== BUSCA =====
+busca.addEventListener('input', (e) => {
+  buscaAtual = e.target.value.trim();
+  renderJogos();
+});
+
+// ===== DETALHES =====
+function abrirDetalhes(id) {
+  const jogo = jogos.find(j => j.id === id);
+  if (!jogo) return;
+  
+  document.getElementById('det-capa').src = jogo.imagemCapa;
+  document.getElementById('det-nome').textContent = jogo.nome;
+  document.getElementById('det-categoria').textContent = `${jogo.categoria} / Download Digital`;
+  document.getElementById('det-tamanho').textContent = jogo.tamanho;
+  document.getElementById('det-sinopse').textContent = jogo.sinopse;
+  document.getElementById('det-download').href = jogo.linkDownload;
+  document.getElementById('detalhes-bg').style.backgroundImage = `url(${jogo.imagemBanner})`;
+  
+  // Sugestões
+  const sug = [...jogos].filter(j => j.id !== id).sort(() => 0.5 - Math.random()).slice(0, 8);
+  const sugGrid = document.getElementById('sugestoes-grid');
+  sugGrid.innerHTML = '';
+  sug.forEach(j => {
+    const c = document.createElement('div');
+    c.className = 'game-card';
+    c.innerHTML = `<img src="${j.imagemCapa}" alt="${j.nome}">`;
+    c.onclick = () => { detalhes.scrollTop = 0; abrirDetalhes(j.id); };
+    sugGrid.appendChild(c);
+  });
+  
+  detalhes.classList.add('ativo');
+  document.body.classList.add('modal-open');
+}
+
+document.getElementById('fechar-detalhes').onclick = fecharDetalhes;
+detalhes.addEventListener('click', (e) => { if (e.target === detalhes) fecharDetalhes(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && detalhes.classList.contains('ativo')) fecharDetalhes(); });
+
+function fecharDetalhes() {
+  detalhes.classList.remove('ativo');
+  document.body.classList.remove('modal-open');
+}
+
+// ===== PARTÍCULAS =====
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  particles = Array(70).fill().map(() => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 1.5 + 0.3,
+    sx: (Math.random() - 0.5) * 0.3,
+    sy: (Math.random() - 0.5) * 0.3,
+    o: Math.random() * 0.5 + 0.2
+  }));
+}
+window.addEventListener('resize', resize);
+resize();
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.x += p.sx; p.y += p.sy;
+    if (p.x < 0 || p.x > canvas.width) p.sx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.sy *= -1;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(229, 9, 20, ${p.o})`;
+    ctx.fill();
+    ctx.fillStyle = `rgba(255, 200, 50, ${p.o * 0.6})`;
+    ctx.fillRect(p.x - 0.5, p.y - 0.5, 1, 1);
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+// ===== INIT =====
+initHero();
+renderJogos();
+
+// Clique no hero abre detalhes
+document.getElementById('hero').addEventListener('click', (e) => {
+  if (e.target.closest('.hero-nav') || e.target.closest('.hero-dots')) return;
+  abrirDetalhes(destaques[slideAtual].id);
+});
+</script>
+<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
+</body>
+</html>
